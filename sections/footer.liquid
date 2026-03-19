@@ -25,6 +25,62 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  /* Custom footer heading style */
+  .footer-block__heading {
+    font-family: var(--font-heading-family);
+    font-weight: 400;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .footer .footer-block__details-content a {
+    font-size: 1.4rem;
+    opacity: 0.75;
+  }
+
+  .footer .footer-block__details-content a:hover {
+    opacity: 1;
+  }
+
+  .footer .footer-block__details-content li + li {
+    margin-top: 1rem;
+  }
+
+  /* Footer newsletter text */
+  .footer-block__newsletter-text {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    opacity: 0.7;
+    margin-bottom: 2rem;
+  }
+
+  /* Footer logo - inverted for dark bg */
+  .footer-block__logo-wrapper {
+    margin-bottom: 2rem;
+  }
+
+  .footer-block__logo {
+    filter: invert(1) brightness(2);
+    width: 100%;
+    height: auto;
+  }
+
+  /* Brand block description */
+  .footer-block__brand-description {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    opacity: 0.7;
+    margin-bottom: 2.5rem;
+    max-width: 30rem;
+  }
+
+  .footer__copyright-custom {
+    font-size: 1.2rem;
+    opacity: 0.5;
+    margin-top: 1rem;
+  }
+
 {%- endstyle -%}
 
 <footer class="footer color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
@@ -75,18 +131,23 @@
                   style="--animation-order: {{ forloop.index }};"
                 {% endif %}
               >
-                {%- if block.settings.heading != blank -%}
-                  <h2 class="footer-block__heading inline-richtext">{{- block.settings.heading -}}</h2>
-                {%- endif -%}
-
                 {%- case block.type -%}
                   {%- when '@app' -%}
+                    {%- if block.settings.heading != blank -%}
+                      <h2 class="footer-block__heading inline-richtext">{{- block.settings.heading -}}</h2>
+                    {%- endif -%}
                     {% render block %}
                   {%- when 'text' -%}
+                    {%- if block.settings.heading != blank -%}
+                      <h2 class="footer-block__heading inline-richtext">{{- block.settings.heading -}}</h2>
+                    {%- endif -%}
                     <div class="footer-block__details-content rte">
                       {{ block.settings.subtext }}
                     </div>
                   {%- when 'link_list' -%}
+                    {%- if block.settings.heading != blank -%}
+                      <h2 class="footer-block__heading inline-richtext">{{- block.settings.heading -}}</h2>
+                    {%- endif -%}
                     {%- if block.settings.menu != blank -%}
                       <ul class="footer-block__details-content list-unstyled">
                         {%- for link in block.settings.menu.links -%}
@@ -103,34 +164,26 @@
                     {%- endif -%}
                   {%- when 'brand_information' -%}
                     <div class="footer-block__brand-info">
-                      {%- if settings.brand_image != blank -%}
-                        {%- assign brand_image_height = settings.brand_image_width
-                          | divided_by: settings.brand_image.aspect_ratio
-                        -%}
-                        <div
-                          class="footer-block__image-wrapper"
-                          style="max-width: min(100%, {{ settings.brand_image_width }}px);"
-                        >
-                          {{
-                            settings.brand_image
-                            | image_url: width: 1100
-                            | image_tag:
-                              loading: 'lazy',
-                              widths: '50, 100, 150, 200, 300, 400, 550, 800, 1100',
-                              height: brand_image_height,
-                              width: settings.brand_image_width
+                      {%- if settings.logo != blank -%}
+                        <div class="footer-block__logo-wrapper" style="max-width: min(100%, {{ settings.logo_width | default: 90 }}px);">
+                          {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+                          {{ settings.logo | image_url: width: 600 | image_tag:
+                            class: 'footer-block__logo',
+                            loading: 'lazy',
+                            width: settings.logo_width,
+                            height: logo_height
                           }}
                         </div>
-                      {%- endif -%}
-                      {%- if settings.brand_headline != blank -%}
-                        <h2 class="footer-block__heading rte">{{ settings.brand_headline }}</h2>
+                      {%- else -%}
+                        <span class="h2">{{ shop.name }}</span>
                       {%- endif -%}
                       {%- if settings.brand_description != blank -%}
-                        <div class="rte">{{ settings.brand_description }}</div>
+                        <div class="rte footer-block__brand-description">{{ settings.brand_description }}</div>
                       {%- endif -%}
                       {%- if block.settings.show_social and has_social_icons -%}
                         {%- render 'social-icons', class: 'footer__list-social' -%}
                       {%- endif -%}
+                      <p class="footer__copyright-custom">&copy; {{ 'now' | date: '%Y' }} &bull; All rights reserved</p>
                     </div>
                   {%- when 'image' -%}
                     <div class="footer-block__details-content footer-block-image {{ block.settings.alignment }}">
@@ -156,20 +209,14 @@
                 {%- endcase -%}
               </div>
             {%- endfor -%}
-          </div>
-        {%- endif -%}
 
-        <div
-          class="footer-block--newsletter{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-          {% if settings.animations_reveal_on_scroll %}
-            data-cascade
-          {% endif %}
-        >
-          {%- if section.settings.newsletter_enable -%}
-            <div class="footer-block__newsletter">
-              {%- if section.settings.newsletter_heading != blank -%}
-                <h2 class="footer-block__heading inline-richtext">{{ section.settings.newsletter_heading }}</h2>
-              {%- endif -%}
+            {%- if section.settings.newsletter_enable -%}
+              <div class="footer-block grid__item footer-block--newsletter-col">
+                <div class="footer-block__newsletter">
+                  {%- if section.settings.newsletter_heading != blank -%}
+                    <h2 class="footer-block__heading inline-richtext">{{ section.settings.newsletter_heading }}</h2>
+                  {%- endif -%}
+                  <p class="footer-block__newsletter-text">Subscribe to our newsletter for exclusive offers, skincare tips, and the latest news</p>
               {%- form 'customer', id: 'ContactFooter', class: 'footer__newsletter newsletter-form' -%}
                 <input type="hidden" name="contact[tags]" value="newsletter">
                 <div class="newsletter-form__field-wrapper">
@@ -227,19 +274,21 @@
                   </h3>
                 {%- endif -%}
               {%- endform -%}
-            </div>
-          {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
 
-          {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
-            <div class="footer__follow-on-shop">
-              {{ shop | login_button: action: 'follow' }}
-            </div>
-          {%- endif -%}
+        {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
+          <div class="footer__follow-on-shop">
+            {{ shop | login_button: action: 'follow' }}
+          </div>
+        {%- endif -%}
 
-          {%- if section.settings.show_social and has_social_icons -%}
-            {%- render 'social-icons', class: 'footer__list-social' -%}
-          {%- endif -%}
-        </div>
+        {%- if section.settings.show_social and has_social_icons -%}
+          {%- render 'social-icons', class: 'footer__list-social' -%}
+        {%- endif -%}
       </div>
     {%- endunless -%}
   {%- endif -%}
@@ -314,6 +363,7 @@
     </div>
   </div>
 </footer>
+
 
 {% schema %}
 {

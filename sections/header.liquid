@@ -160,18 +160,21 @@
       display: inline-flex;
     }
 
-    /* Bag text label */
-    .header__icon--bag {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .header__bag-text {
+    /* Bag label next to cart icon - desktop only */
+    .header__bag-label {
       font-size: 1.2rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: nowrap;
+      color: rgb(var(--color-foreground));
+      align-self: center;
+      margin-left: 0.75rem;
+      text-decoration: none;
+    }
+
+    /* Hide Dawn's default cart-count-bubble on desktop */
+    .cart-count-bubble {
+      display: none;
     }
   }
 
@@ -190,10 +193,64 @@
     flex-shrink: 0;
   }
 
-  /* Hide bag text on mobile, show only icon */
+  /* Hide account icon */
+  .header__icon--account {
+    display: none !important;
+  }
+
+  /* Mobile logo swap */
+  .header__heading-logo--mobile {
+    display: none;
+  }
+
   @media screen and (max-width: 989px) {
-    .header__bag-text {
+    .header__heading-logo--desktop {
       display: none;
+    }
+
+    .header__heading-logo--mobile {
+      display: inline-block;
+    }
+
+    /* Mobile: hide text label, show Dawn's default bubble */
+    .header__bag-label {
+      display: none;
+    }
+
+    .cart-count-bubble {
+      display: flex;
+    }
+
+    /* Mobile header: logo left, icons + burger right */
+    .header--top-center {
+      display: flex;
+      align-items: center;
+    }
+
+    .header--top-center .header__heading,
+    .header--top-center .header__heading-link {
+      justify-self: start;
+      text-align: left;
+      flex: 1;
+    }
+
+    .header--top-center .header__inline-menu {
+      display: none;
+    }
+
+    .header--top-center > .desktop-localization-wrapper {
+      display: none;
+    }
+
+    .header--top-center .header__icons {
+      order: 2;
+      flex: 0 0 auto;
+    }
+
+    .header--top-center header-drawer {
+      order: 3;
+      flex: 0 0 auto;
+      margin-left: 0;
     }
   }
 {%- endstyle -%}
@@ -260,7 +317,7 @@
       {%- endif -%}
           <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
             {%- if settings.logo != blank -%}
-              <div class="header__heading-logo-wrapper">
+              <div class="header__heading-logo-wrapper header__heading-logo--desktop">
                 {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
                 {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
                 {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
@@ -272,6 +329,21 @@
                   width: settings.logo_width,
                   alt: logo_alt,
                   sizes: sizes,
+                  preload: true
+                }}
+              </div>
+              {%- liquid
+                assign mobile_logo_img = section.settings.mobile_logo | default: settings.logo
+                assign mobile_logo_w = section.settings.mobile_logo_width | default: 150
+                assign mobile_logo_h = mobile_logo_w | divided_by: mobile_logo_img.aspect_ratio
+              -%}
+              <div class="header__heading-logo-wrapper header__heading-logo--mobile" style="width: {{ mobile_logo_w }}px;">
+                {{ mobile_logo_img | image_url: width: 600 | image_tag:
+                  class: 'header__heading-logo',
+                  width: mobile_logo_w,
+                  height: mobile_logo_h,
+                  alt: logo_alt,
+                  sizes: '50vw',
                   preload: true
                 }}
               </div>
@@ -389,7 +461,7 @@
         {%- endcase -%}
       {%- endfor -%}
 
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart header__icon--bag link focus-inset" id="cart-icon-bubble">
+      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
         {%- liquid
           if cart == empty
             render 'icon-cart-empty'
@@ -397,9 +469,17 @@
             render 'icon-cart'
           endif
         -%}
-        <span class="header__bag-text">BAG ({{ cart.item_count }})</span>
         <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+        {%- if cart != empty -%}
+          <div class="cart-count-bubble">
+            {%- if cart.item_count < 100 -%}
+              <span aria-hidden="true">{{ cart.item_count }}</span>
+            {%- endif -%}
+            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+          </div>
+        {%- endif -%}
       </a>
+      <a href="{{ routes.cart_url }}" class="header__bag-label link link--text">BAG ({{ cart.item_count }})</a>
     </div>
   </header>
 </{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}>
@@ -715,8 +795,24 @@
           "label": "t:sections.header.settings.mobile_logo_position.options__2.label"
         }
       ],
-      "default": "center",
+      "default": "left",
       "label": "t:sections.header.settings.mobile_logo_position.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_logo",
+      "label": "Mobile logo",
+      "info": "Optional. A wider/shorter logo for mobile header. Falls back to main logo."
+    },
+    {
+      "type": "range",
+      "id": "mobile_logo_width",
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile logo width",
+      "default": 150
     },
     {
       "type": "header",
