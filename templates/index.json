@@ -39,7 +39,7 @@
       "settings": {
         "heading": "This Week's Top Pick",
         "subtitle": "Discover our must-haves for visible results and radiant skin",
-        "image": "",
+        "image": "shopify://shop_images/firma_bright.webp",
         "vendor": "HYDROPEPTIDE",
         "product_title": "Barrier Builder",
         "description": "A ceramide barrier repair cream for damaged skin that's been consciously formulated to calm inflammation and irritation.",
@@ -65,6 +65,7 @@
     "newsletter": {
       "type": "newsletter-banner",
       "settings": {
+        "image": "shopify://shop_images/ev-bg-satin.png",
         "heading": "Sign up for our Newsletter",
         "text": "Find out in advance about exclusive offers and valuable care tips from our experts – sign up for our newsletter and enjoy a 10% discount on your first order.",
         "input_placeholder": "Your E-Mail",
