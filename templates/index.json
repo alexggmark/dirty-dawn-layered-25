@@ -12,9 +12,9 @@
     "blog_hero": {
       "type": "blog-hero-carousel",
       "settings": {
-        "blog": "",
+        "blog": "news",
         "articles_to_show": 3,
-        "slide_height": "large",
+        "slide_height": "medium",
         "image_overlay_opacity": 20,
         "color_scheme": "scheme-1",
         "auto_rotate": false,
