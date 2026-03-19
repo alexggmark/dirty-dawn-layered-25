@@ -57,13 +57,18 @@
   }
 
   .blog-hero-carousel__cta {
-    display: inline-block;
-    padding: 1.2rem 3rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 4.5rem;
+    padding: 0 3rem;
     border: 0.1rem solid rgb(var(--color-foreground));
+    background: transparent;
     text-decoration: none;
     text-transform: uppercase;
-    font-size: 1.2rem;
-    letter-spacing: 0.12em;
+    font: inherit;
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
     color: rgb(var(--color-foreground));
     transition: background-color 0.2s, color 0.2s;
   }
