@@ -80,7 +80,7 @@
 
 {%- style -%}
   .header {
-    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 3rem {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px 3rem;
+    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 3rem 10px 3rem;
   }
 
   .section-header {
@@ -97,7 +97,103 @@
   @media screen and (min-width: 990px) {
     .header {
       padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+      padding-bottom: 5px;
+    }
+  }
+
+  /* Two-level header: nav row separated from logo row */
+  @media screen and (min-width: 990px) {
+    .header--top-center .header__inline-menu {
+      width: 100%;
+      padding-top: 0.5rem;
+      padding-bottom: 0;
+      margin-top: 0.8rem;
+      grid-column: 1 / -1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Full-width divider line that breaks out of page-width */
+    .header--top-center .header__inline-menu::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+    }
+
+    .header--top-center .header__inline-menu > .list-menu--inline {
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .header--top-center .header__menu-item {
+      text-transform: uppercase;
+      font-size: 1.2rem;
+      letter-spacing: 0.12em;
+      color: rgb(var(--color-foreground));
+      font-weight: 400;
+    }
+
+    .header--top-center .header__heading-link {
+      justify-self: center;
+    }
+
+    .header--top-center > .desktop-localization-wrapper {
+      grid-area: left-icons;
+      justify-self: start;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .header--top-center > .desktop-localization-wrapper .disclosure__list-wrapper {
+      right: auto;
+      left: 0;
+    }
+
+    /* Keep search visible in icons area for top-center */
+    .header--top-center .header__icons .header__search {
+      display: inline-flex;
+    }
+
+    /* Bag text label */
+    .header__icon--bag {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .header__bag-text {
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  }
+
+  /* Country selector fallback (single-country store) */
+  .header__country-fallback {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    color: rgb(var(--color-foreground));
+    cursor: default;
+  }
+
+  .header__country-fallback svg {
+    flex-shrink: 0;
+  }
+
+  /* Hide bag text on mobile, show only icon */
+  @media screen and (max-width: 989px) {
+    .header__bag-text {
+      display: none;
     }
   }
 {%- endstyle -%}
@@ -153,7 +249,7 @@
         render 'header-drawer'
       endif
 
-      if section.settings.logo_position == 'top-center' or section.settings.menu == blank
+      if section.settings.menu == blank
         render 'header-search', input_id: 'Search-In-Modal-1'
       endif
     -%}
@@ -228,30 +324,37 @@
       {%- endif -%}
     {%- endif -%}
 
-    <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header-localization{% endif %}">
-      <div class="desktop-localization-wrapper">
-        {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
-          <localization-form class="small-hide medium-hide" data-prevent-hide>
-            {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
-              <div>
-                <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
-                {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
-              </div>
-            {%- endform -%}
-          </localization-form>
-        {% endif %}
+    <div class="desktop-localization-wrapper small-hide medium-hide header-localization">
+      {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+        <localization-form data-prevent-hide>
+          {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
+            <div>
+              <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
+              {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
+            </div>
+          {%- endform -%}
+        </localization-form>
+      {%- elsif section.settings.enable_country_selector -%}
+        <div class="header__country-fallback">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>{{ localization.country.name }} ({{ localization.country.currency.iso_code }})</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 14 10" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M.94 2L7 8.06 13.06 2 12 .94 7 5.94 2 .94.94 2z" fill="currentColor"/></svg>
+        </div>
+      {%- endif -%}
 
-        {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
-          <localization-form class="small-hide medium-hide" data-prevent-hide>
-            {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
-              <div>
-                <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
-                {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
-              </div>
-            {%- endform -%}
-          </localization-form>
-        {%- endif -%}
-      </div>
+      {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+        <localization-form data-prevent-hide>
+          {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
+            <div>
+              <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
+              {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
+            </div>
+          {%- endform -%}
+        </localization-form>
+      {%- endif -%}
+    </div>
+
+    <div class="header__icons">
       {% render 'header-search', input_id: 'Search-In-Modal' %}
 
       {%- if shop.customer_accounts_enabled -%}
@@ -286,7 +389,7 @@
         {%- endcase -%}
       {%- endfor -%}
 
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
+      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart header__icon--bag link focus-inset" id="cart-icon-bubble">
         {%- liquid
           if cart == empty
             render 'icon-cart-empty'
@@ -294,15 +397,8 @@
             render 'icon-cart'
           endif
         -%}
+        <span class="header__bag-text">BAG ({{ cart.item_count }})</span>
         <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
-        {%- if cart != empty -%}
-          <div class="cart-count-bubble">
-            {%- if cart.item_count < 100 -%}
-              <span aria-hidden="true">{{ cart.item_count }}</span>
-            {%- endif -%}
-            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
-          </div>
-        {%- endif -%}
       </a>
     </div>
   </header>
