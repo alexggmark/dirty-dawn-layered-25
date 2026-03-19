@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /Users/alex/Documents/DesktopDesktop/Dev/Git/2024/layered-dawn-2026/assets/*.js)",
+      "Bash(ls /Users/alex/Documents/DesktopDesktop/Dev/Git/2024/layered-dawn-2026/assets/*.js)",
+      "Bash(ls:*)"
+    ]
+  }
+}
