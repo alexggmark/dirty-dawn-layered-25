@@ -3,7 +3,8 @@
     "allow": [
       "Bash(ls -la /Users/alex/Documents/DesktopDesktop/Dev/Git/2024/layered-dawn-2026/assets/*.js)",
       "Bash(ls /Users/alex/Documents/DesktopDesktop/Dev/Git/2024/layered-dawn-2026/assets/*.js)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(grep -n \"grid--.*col-desktop\\\\|grid__item\\\\|--grid-desktop\" /Users/alex/Documents/DesktopDesktop/Dev/Git/2024/layered-dawn-2026/assets/*.css)"
     ]
   }
 }

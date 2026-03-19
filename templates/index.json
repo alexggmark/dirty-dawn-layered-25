@@ -21,6 +21,19 @@
         "change_slides_speed": 5
       }
     },
+    "blog_cards": {
+      "type": "blog-card-carousel",
+      "settings": {
+        "heading": "The EV Latest",
+        "subtitle": "Discover our must-haves for visible results and radiant skin",
+        "blog": "news",
+        "articles_to_show": 2,
+        "duplicate_count": 5,
+        "color_scheme": "scheme-1",
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
@@ -52,6 +65,7 @@
   },
   "order": [
     "blog_hero",
+    "blog_cards",
     "featured_collection"
   ]
 }
